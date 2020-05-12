@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+<title>Socionics二分法测试</title> 
+</head>
+<body>
+<h1>Socionics二分法测试 Beta v0.1</h1>
+	<p>以下选项<b>没有</b>对错、好坏之分，请凭第一感觉选择自己最符合的一项。<br /></p>
+<p id="quiz">
+</p>
+<button type="button" onclick="submit()">提交</button>
+<p id="res"></p>
+<p id="conc"></p>
+<script>
+
+	var ch=[['',''],['',''],['',''],['',''],
+	//非理性&理性
+	['更灵活和宽松','更僵硬和固执'],
+	['经常改变已经做好的决定','不喜欢改变已经做好的决定'],
+	['在没有完成的情况下开始新的工作','完成已经开始的工作'],
+	['抗压能力强','抗压能力弱'],
+	//逻辑&伦理
+	['更容易谈论对错','更容易谈论好坏'],
+	['倾向于辩论','倾向于说服'],
+	['对系统，结构和模式感兴趣','擅长解决人际关系问题'],
+	['做决定时更基于逻辑因素','思想和互动中更重视道德伦理因素'],
+	//建构&情感
+	['拥有固定不变的情感“锚”（书籍，电影，地点等）来支持内在的情感状态','比起旧的和已知的，更喜欢新的和没见过的'],
+	['不管信息整体的质量如何，都会对特定的部分有强烈的反应','对整体质量低下的信息漠不关心'],
+	['更难忽略他人的情感和经验','更难忽略他人对行动和考虑的要求'],
+	['在对话中更重视具体的事务和解决方案','在对话中更重视情感背景'],
+	//直觉&感觉
+	['更理想主义，不切实际','更现实主义，脚踏实地'],
+	['更关注想法和观点','更关注当下和此处的环境'],
+	['身体对抗不那么自然','身体对抗很自然'],
+	['对理论更感兴趣','对实践更感兴趣'],
+	//战术&战略
+	['更专注于方法','更专注于目标'],
+	['避免设定遥远的长期目标','有意识地设定目标，很难取消它们'],
+	['现在和过去发生的事情的所有可能性都是等同的','存在某个“关键阶段”，使我到达了现在的状态'],
+	['更喜欢扩展可能的选项','更喜欢捍卫既定的目的'],
+	//*开明&贵族
+	['通过人的个性和品质来感知他们','通过人所属的类别和群体来感知他们'],
+	['个体的想法不能代表某个群体','个体能代表他所属群体的某些特征'],
+	['人们会根据共同的兴趣，事业和想法聚集在一起','人们所在的集体会影响他们的特质'],
+	['更重视个人的特质','更重视社会地位'],
+	//过程&结果
+	['做事时沉浸在过程之中','做事时与过程分离'],
+	['单任务','多任务'],
+	['阅读文字时从前到后','阅读文字时顺序随意'],
+	['如果遵循了正确的步骤，就会得到正确的结果','如果得到的结果是正确的，步骤就应该是正确的'],
+	//外倾&内倾
+	['更专注于周围环境','更专注于自己的想法和感觉'],
+	['与一大群人互动时能量较多','单独一个人时能量较多'],
+	['更喜欢表现自己','更擅长集中精力'],
+	['更喜欢在小组里工作','更喜欢单独工作'],
+	//*静态&动态
+	['谈论事实的属性和结构','谈论事实的运动和相互作用'],
+	['描述事情的单个阶段是什么样的','描述不同阶段之间的相互关系'],
+	['倾向于分析思维','倾向于综合思维'],
+	['感知分离的、个体的状态','感知连续的变化流'],
+	//*顺从&固执
+	['与别人自由地分享你的观点','与别人自由地分享你的资源'],
+	['放弃那些无法达到的兴趣','从不放弃自己的兴趣'],
+	['对别人索取资源的要求反应强烈','对别人将兴趣和想法强加于自己反应强烈'],
+	['清楚地知道自己的个人能力','清楚地知道自己想要的东西'],
+	//快乐&严肃
+	['自然而然地认识某人，自我介绍并不重要','需要仪式和介绍与他人相识'],
+	['没有“客观真理”，一切都是相对的','存在“客观真理”和唯一正确的方法'],
+	['反驳他人时，首先阐述自己的观点并与对方的观点比较','反驳他人时，首先确保对方正确的理解了概念和术语'],
+	['情感背景和“乐趣”可以与事务本身分离开来','事务本身必须有趣和有娱乐元素'],
+	//*无虑&远视
+	['解决问题时使用当下和“手头”的信息','解决问题时使用知识和经验中得到的信息'],
+	['不能为一切都做好准备','最好提前做好准备'],
+	['给出适用于目前特定情况的解决方法','给出一般性的解决方法'],
+	['给出答案时暗示答案所在的环境','给出答案时明确分析过程和所在的上下文'],
+	//审慎&果断
+	['更容易放松','更容易动员和准备就绪'],
+	['工作的条件（环境）比回报（薪水）更重要','工作的回报（薪水）比条件（环境）更重要'],
+	['反复考虑','做出决定'],
+	['把事务划分成小的阶段','一次完成整个任务'],
+	//积极&消极
+	['优化，美化和改进现有的事物，系统或过程','发现和解决事物，系统或过程中的问题'],
+	['新事物或人出现时，先持信任的态度','新事物或人出现时，先持批判的态度'],
+	['更多的使用肯定句如“这是好的”、“这是坏的”','更多的使用否定句如“这不是坏的”、“这不是好的”'],
+	['区分事物时，注意力集中在事物所固有的特征上','区分事物时，注意力集中在与事物无关的特性上'],
+	//提问&声明
+	['对话','独白'],
+	['提出普通的问句，然后自己解答它','使用反问句和设问句'],
+	['能和整体的听众交流','一次与一个人交流'],
+	['用对，嗯等信息回复其他人','专注地听完其他人说的话']];
+var stem='你倾向于以下哪种：';
+var zero='介于两者之间或不知道';
+var dims=[['',''],['非理性','理性'],['逻辑','伦理'],['建构','情感'],
+		 ['直觉','感觉'],['战术','战略'],['开明','贵族'],['过程','结果'],
+		 ['外倾','内倾'],['静态','动态'],['顺从','固执'],['快乐','严肃'],
+		 ['无虑','远视'],['审慎','果断'],['积极','消极'],['提问','声明']];
+var len=15,ppt=4;
+var probs=new Array();
+var i,j,k;
+var types=['ENTp(ILE)','ENTj(LIE)','ENFp(IEE)','ENFj(EIE)','ESTp(SLE)','ESTj(LSE)','ESFp(SEE)','ESFj(ESE)',
+		  'INTp(ILI)','INTj(LII)','INFp(IEI)','INFj(EII)','ISTp(SLI)','ISTj(LSI)','ISFp(SEI)','ISFj(ESI)'];
+var tends;
+var likelihood=[0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0];
+var typen=16,type;
+for (i=1;i<=len;i++)
+{
+	for (j=0;j<ppt;j++)
+	{
+		k=i*ppt+j;
+		if (Math.floor(Math.random()*2)==0)
+		{
+			probs[k-ppt] = stem + '<br />\n<form name="p' + i.toString() + 'a' + j.toString() + '">\n'
+			+ '<input type="radio" name="ans" value=1>' + ch[k][0] + '<br />'
+			+ '<input type="radio" name="ans" value=-1>' + ch[k][1] + '<br />'
+			+ '<input type="radio" name="ans" value=0>' + zero + '<br />\n</form><br />';
+		}
+		else
+		{
+			probs[k-ppt] = stem + '<br />\n<form name="p' + i.toString() + 'a' + j.toString() + '">\n'
+			+ '<input type="radio" name="ans" value=-1>' + ch[k][1] + '<br />'
+			+ '<input type="radio" name="ans" value=1>' + ch[k][0] + '<br />'
+			+ '<input type="radio" name="ans" value=0>' + zero + '<br />\n</form><br />';
+		}
+	}
+}
+var tmp;
+for (i=len*ppt-1;i>0;i--)
+{
+	j = Math.floor(Math.random()*(i+1));
+	tmp = probs[j];
+	probs[j] = probs[i];
+	probs[i] = tmp;
+}
+for (i=0;i<len*ppt;i++)
+{
+	tmp = i + 1;
+	probs[i] = tmp.toString() + "、" + probs[i] + "\n";
+}
+var txt = probs.join("");
+document.getElementById("quiz").innerHTML = txt;
+function submit(){
+	tends=[0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0];
+	for(i=1;i<=len;i++)
+	{
+		for(j=0;j<ppt;j++)
+		{tends[i]+=Number(document.forms["p"+i.toString()+"a"+j.toString()]["ans"].value);}
+	}
+	for(type=0;type<typen;type++)
+	{
+		likelihood[type]=len*ppt;
+		for(i=1;i<=len;i++)
+		{
+			tmp=type&i;
+			tmp^=tmp>>1;
+			tmp^=tmp>>2;
+			tmp&=1;
+			likelihood[type]+=tends[i]*(1-tmp*2);
+		}
+	}
+	var ord=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+	for(i=0;i<typen-1;i++)
+	for(j=i+1;j<typen;j++)
+	{
+		if(likelihood[ord[i]]<likelihood[ord[j]])
+		{
+			tmp=ord[i];ord[i]=ord[j];ord[j]=tmp;
+		}
+	}
+	var output;
+	var sco=len*ppt;
+	var sco2=sco*2;
+	output='以下'+typen.toString()+'种类型中，得分越高，则你越有可能是该类型。满分为'+sco2.toString()+
+		'分，基准线为'+sco.toString()+'分。<br /><br />'
+		+'你的结果如下：<br />';
+	for(i=0;i<typen;i++)
+	{
+		tmp=i+1;
+		output+=tmp.toString()+'、'+types[ord[i]]+'  '+likelihood[ord[i]].toString()+'分<br />';
+	}
+	output+='<button type="button" onclick="seeConc()">查看明细</button>';
+	document.getElementById("res").innerHTML = output;
+	document.getElementById("conc").innerHTML = '';
+}
+function seeConc(){
+	var axis;
+	var marker='●';
+	var output='你的各二分法的倾向如下：<br />';
+	for (i=1;i<=len;i++)
+	{
+		axis=['─','─','─','─','┼','─','─','─','─'];
+		axis[tends[i]+ppt]=marker;
+		output += dims[i][1]+'←'+axis.join("")+'→'+dims[i][0]+'<br />'; 
+	}
+	output+='<br />更多关于Socionics二分法的知识，请点击<a href="https://www.douban.com/group/topic/166149303/">这里</a>。';
+	document.getElementById("conc").innerHTML = output;
+}
+</script>
+
+</body>
+</html>
